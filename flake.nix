@@ -7,9 +7,15 @@
     rust-overlay.url = "github:oxalica/rust-overlay";
   };
 
-  outputs = { nixpkgs, flakeUtils, rust-overlay, ... }:
-    flakeUtils.lib.eachDefaultSystem (system:
-      let
+  outputs = {
+    self,
+    nixpkgs,
+    flakeUtils,
+    rust-overlay,
+    ...
+  }:
+    (flakeUtils.lib.eachDefaultSystem (
+      system: let
         overlays = [(import rust-overlay)];
         pkgs = import nixpkgs {
           inherit system overlays;
@@ -52,8 +58,7 @@
 
             inherit buildInputs nativeBuildInputs;
           };
-      in
-      {
+      in {
         # Packages can be built with `nix build .#iggy-server` for example.
         packages = {
           iggy-server = mkPackage "iggy-server";
@@ -70,5 +75,8 @@
           };
         };
       }
-    );
+    ))
+    // {
+      nixosModules.default = import ./nix/module.nix self;
+    };
 }
