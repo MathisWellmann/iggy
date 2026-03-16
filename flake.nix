@@ -36,6 +36,7 @@
           openssl
           libffi
           hwloc
+          cacert
         ];
         rust_tools = with pkgs; [
           taplo # Format `toml` files like `Cargo.toml`
@@ -54,7 +55,9 @@
 
             cargoBuildFlags = ["--bin" "${pname}"];
             cargoLock.lockFile = ./Cargo.lock;
+            doCheck = false; # Nix sandboxing won't permit setting ulimits, so chek would fail.
             env.RUSTY_V8_ARCHIVE = "${rustyV8Lib}";
+            SSL_CERT_FILE = "${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt";
 
             inherit buildInputs nativeBuildInputs;
           };
