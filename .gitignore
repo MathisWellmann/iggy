@@ -43,3 +43,4 @@ core/bench/dashboard/frontend/dist
 LICENSE-binary
 **/LICENSE-binary
 .direnv/
+result # Nix build result

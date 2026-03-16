@@ -407,7 +407,7 @@ in {
         Restart = "on-failure";
         RestartSec = "5s";
         LimitNOFILE = 65536;
-        LimitMEMLOCK="infinity";
+        LimitMEMLOCK = "infinity";
 
         # Hardening
         NoNewPrivileges = true;
