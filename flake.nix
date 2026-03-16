@@ -48,6 +48,20 @@
           statix # Highlights nix antipatterns
         ];
 
+        # Build the embedded Web UI (SvelteKit static adapter).
+        webUI = pkgs.buildNpmPackage {
+          pname = "iggy-web-ui";
+          version = "0.2.1-edge.1";
+          src = ./web;
+          npmDepsHash = "sha256-5j4+rVnt8E4Pra2gjefi4cML6JQrYhkiSRGCxqPLyEc=";
+          buildPhase = ''
+            npm run build:static
+          '';
+          installPhase = ''
+            cp -r build/static $out
+          '';
+        };
+
         mkPackage = pname:
           pkgs.rustPlatform.buildRustPackage {
             name = pname;
@@ -64,7 +78,13 @@
       in {
         # Packages can be built with `nix build .#iggy-server` for example.
         packages = {
-          iggy-server = mkPackage "iggy-server";
+          iggy-server = (mkPackage "iggy-server").overrideAttrs (old: {
+            preBuild = ''
+              # Place pre-built Web UI assets where rust-embed expects them.
+              mkdir -p web/build
+              cp -rL --no-preserve=mode ${webUI} web/build/static
+            '';
+          });
           iggy-cli = mkPackage "iggy-cli";
           iggy-bench = mkPackage "iggy-bench";
         };

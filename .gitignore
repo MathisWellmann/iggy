@@ -41,3 +41,4 @@ foreign/node/.npm
 go.work
 core/bench/dashboard/frontend/dist
 .direnv/
+result # Nix build result
