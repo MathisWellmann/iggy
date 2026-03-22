@@ -85,7 +85,6 @@
               cp -rL --no-preserve=mode ${webUI} web/build/static
             '';
           });
-          iggy-cli = mkPackage "iggy-cli";
           iggy-bench = mkPackage "iggy-bench";
         };
 
