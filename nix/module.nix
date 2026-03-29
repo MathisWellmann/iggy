@@ -75,6 +75,21 @@ in {
         See upstream `core/server/config.toml` for all available options.
       '';
     };
+
+    envFile = lib.mkOption {
+      type = lib.types.nullOr lib.types.path;
+      default = null;
+      description = ''
+        Path to an environment file containing sensitive configuration variables.
+        This is the recommended way to set credentials such as:
+        - `IGGY_ROOT_USERNAME`: Custom root username (default: "iggy")
+        - `IGGY_ROOT_PASSWORD`: Custom root password (auto-generated if not set)
+
+        Note: Both IGGY_ROOT_USERNAME and IGGY_ROOT_PASSWORD must be set together.
+        If neither is set, a random password will be generated on first startup
+        and printed to the service logs.
+      '';
+    };
   };
 
   config = lib.mkIf cfg.enable {
@@ -127,6 +142,9 @@ in {
         ProtectKernelModules = true;
         ProtectControlGroups = true;
         ReadWritePaths = [cfg.dataDir];
+
+        # Add envFile if specified (for credentials like IGGY_ROOT_USERNAME/PASSWORD)
+        EnvironmentFile = lib.optionals (cfg.envFile != null) cfg.envFile;
       };
     };
 
@@ -134,14 +152,14 @@ in {
       # Basically, if the final config has `<proto>.enabled` set, then open the pots with the associated address (or default).
       allowedTCPPorts =
         lib.optional (parsedConfig.http.enabled or true)
-          (getPort (parsedConfig.http.address or "127.0.0.1:3000"))
+        (getPort (parsedConfig.http.address or "127.0.0.1:3000"))
         ++ lib.optional (parsedConfig.tcp.enabled or true)
-          (getPort (parsedConfig.tcp.address or "127.0.0.1:8090"))
+        (getPort (parsedConfig.tcp.address or "127.0.0.1:8090"))
         ++ lib.optional (parsedConfig.websocket.enabled or true)
-          (getPort (parsedConfig.websocket.address or "127.0.0.1:8092"));
+        (getPort (parsedConfig.websocket.address or "127.0.0.1:8092"));
       allowedUDPPorts =
         lib.optional (parsedConfig.quic.enabled or true)
-          (getPort (parsedConfig.quic.address or "127.0.0.1:8080"));
+        (getPort (parsedConfig.quic.address or "127.0.0.1:8080"));
     };
   };
 }
