@@ -53,7 +53,7 @@
           pname = "iggy-web-ui";
           version = "0.2.1-edge.1";
           src = ./web;
-          npmDepsHash = "sha256-5j4+rVnt8E4Pra2gjefi4cML6JQrYhkiSRGCxqPLyEc=";
+          npmDepsHash = "sha256-fVk2oOFhbzSKOoaZPvFGDXfEjvt1lnWE3PPHU3tBOCk=";
           buildPhase = ''
             npm run build:static
           '';
