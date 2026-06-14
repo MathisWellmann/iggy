@@ -73,7 +73,7 @@
             env.RUSTY_V8_ARCHIVE = "${rustyV8Lib}";
             SSL_CERT_FILE = "${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt";
 
-            inherit buildInputs nativeBuildInputs;
+            inherit pname buildInputs nativeBuildInputs;
           };
       in {
         # Packages can be built with `nix build .#iggy-server` for example.
