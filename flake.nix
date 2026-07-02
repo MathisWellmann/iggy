@@ -48,11 +48,14 @@
       ];
 
       # Build the embedded Web UI (SvelteKit static adapter).
+      # importNpmLock derives dependency hashes from package-lock.json,
+      # so no manual npmDepsHash re-pinning when the lockfile changes.
       webUI = pkgs.buildNpmPackage {
         pname = "iggy-web-ui";
-        version = "0.2.1-edge.1";
+        version = (builtins.fromJSON (builtins.readFile ./web/package.json)).version;
         src = ./web;
-        npmDepsHash = "sha256-bNIwoMbE5rotuRH5pq45HjBHfrr6QgX93F+u/t2lx1M=";
+        npmDeps = pkgs.importNpmLock {npmRoot = ./web;};
+        npmConfigHook = pkgs.importNpmLock.npmConfigHook;
         buildPhase = ''
           npm run build:static
         '';
